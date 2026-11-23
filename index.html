@@ -1,0 +1,748 @@
+<title>Cabinet Noir</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Mise en page : un livre ouvert à gauche (colonne de lecture ~65ch), le carnet de l'enquêteur épinglé à droite */
+:root{
+  --paper:#E9EBE6; --page:#F6F6F1; --ink:#1B2130; --muted:#5B6270; --rule:#CDD0C6;
+  --crimson:#8C2A33; --brass:#8A6A1E; --stamp:#8C2A3318; --shadow:0 1px 0 #0000000d,0 12px 30px -18px #1b213055;
+  --f-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --f-body:"Literata",Georgia,"Times New Roman",serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#11141B; --page:#181C25; --ink:#E3E0D6; --muted:#9BA1AD; --rule:#2B3140;
+  --crimson:#D46A72; --brass:#CDA650; --stamp:#D46A7222; --shadow:0 1px 0 #ffffff08,0 12px 30px -18px #000;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#11141B; --page:#181C25; --ink:#E3E0D6; --muted:#9BA1AD; --rule:#2B3140;
+  --crimson:#D46A72; --brass:#CDA650; --stamp:#D46A7222; --shadow:0 1px 0 #ffffff08,0 12px 30px -18px #000;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase}
+.wrap{max-width:1180px;margin:0 auto}
+
+/* En-tête */
+.mast{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:28px 18px;border-bottom:1px solid var(--rule)}
+.mast h1{margin:0;font-family:var(--f-display);font-style:italic;font-weight:500;font-size:clamp(2.1rem,5vw,3rem);line-height:1;letter-spacing:-.01em}
+.mast h1 a{color:inherit;text-decoration:none}
+.mast h1 span{color:var(--crimson)}
+.mast .mono{color:var(--muted)}
+
+/* Accueil */
+.accueil{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:48px;padding-top:40px}
+@media (max-width:900px){.accueil{grid-template-columns:1fr;gap:32px}}
+.intro h2{font-family:var(--f-display);font-weight:500;font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.1;margin:.2em 0 .5em;text-wrap:balance}
+.intro h2 em{color:var(--crimson)}
+.intro p.lede{color:var(--muted);max-width:52ch;margin:0 0 28px}
+.extrait{background:var(--page);border:1px solid var(--rule);box-shadow:var(--shadow);padding:28px 30px;position:relative;max-width:62ch}
+.extrait .mono{color:var(--brass);display:block;margin-bottom:10px}
+.extrait p{margin:0 0 .8em}
+.extrait p:last-child{margin:0}
+.tampon{position:absolute;right:18px;top:-14px;transform:rotate(4deg);border:2px solid var(--crimson);color:var(--crimson);background:var(--page);padding:3px 10px;font-family:var(--f-mono);font-size:.7rem;letter-spacing:.18em}
+
+.biblio{margin-top:36px}
+.biblio h3,.form h3{font-family:var(--f-display);font-weight:500;font-size:1.35rem;margin:0 0 12px}
+.biblio ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.biblio li{display:flex;gap:12px;align-items:center;justify-content:space-between;border-top:1px solid var(--rule);padding-top:10px;flex-wrap:wrap}
+.biblio .t{min-width:0}
+.biblio .t b{font-weight:600;display:block}
+.biblio .t small{color:var(--muted)}
+.biblio .acts{display:flex;gap:6px}
+
+/* Formulaire */
+.form{background:var(--page);border:1px solid var(--rule);box-shadow:var(--shadow);padding:26px 26px 28px;display:grid;gap:20px;align-content:start}
+.champ{display:grid;gap:8px}
+.champ > label,.champ > .lab{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips input{position:absolute;opacity:0;pointer-events:none}
+.chips label{border:1px solid var(--rule);padding:6px 11px;cursor:pointer;font-size:.92rem;line-height:1.3;background:transparent;transition:background .15s,border-color .15s}
+.chips label:hover{border-color:var(--muted)}
+.chips input:checked + label{background:var(--ink);color:var(--page);border-color:var(--ink)}
+.chips input:focus-visible + label{outline:2px solid var(--brass);outline-offset:2px}
+.txt{width:100%;background:transparent;border:0;border-bottom:1px solid var(--rule);padding:6px 0;font-size:1rem}
+.txt:focus{border-color:var(--ink);outline:none}
+textarea.txt{border:1px solid var(--rule);padding:10px;resize:vertical;min-height:70px}
+textarea.txt:focus{border-color:var(--ink)}
+
+.btn{border:1px solid var(--ink);background:var(--ink);color:var(--page);padding:12px 20px;cursor:pointer;font-family:var(--f-mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase}
+.btn:hover{background:var(--crimson);border-color:var(--crimson)}
+.btn:disabled{opacity:.45;cursor:not-allowed;background:var(--ink)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--stamp);border-color:var(--crimson);color:var(--crimson)}
+.btn.small{padding:6px 10px;font-size:.66rem}
+.lien{background:none;border:0;padding:0;color:var(--crimson);cursor:pointer;text-decoration:underline;text-underline-offset:3px;font-size:.9rem}
+.avis{border-left:3px solid var(--crimson);padding:8px 12px;background:var(--stamp);font-size:.92rem}
+
+/* Enquête */
+.enquete{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:40px;padding-top:32px;align-items:start}
+@media (max-width:960px){.enquete{grid-template-columns:minmax(0,1fr)}}
+.livre{background:var(--page);border:1px solid var(--rule);box-shadow:var(--shadow);padding:clamp(22px,5vw,56px);min-width:0}
+.livre > *{max-width:64ch;margin-left:auto;margin-right:auto}
+.dossier-tete{text-align:center;padding-bottom:28px;border-bottom:1px solid var(--rule);margin-bottom:8px}
+.dossier-tete .mono{color:var(--crimson)}
+.dossier-tete h2{font-family:var(--f-display);font-weight:500;font-style:italic;font-size:clamp(1.9rem,5vw,3rem);line-height:1.05;margin:.35em 0 .3em;text-wrap:balance}
+.dossier-tete p{color:var(--muted);margin:0;font-size:.95rem}
+.chap{padding-top:36px}
+.chap .choisi{font-style:italic;color:var(--muted);font-size:.92rem;margin:0 0 20px;padding-left:14px;border-left:2px solid var(--brass)}
+.chap .mono{color:var(--brass);display:block;text-align:center}
+.chap h3{font-family:var(--f-display);font-weight:500;font-size:1.65rem;text-align:center;margin:.25em 0 1em;text-wrap:balance;line-height:1.15}
+.prose p{margin:0;text-indent:1.4em;hyphens:auto}
+.prose p:first-child{text-indent:0}
+.prose p:first-child::first-letter{font-family:var(--f-display);float:left;font-size:3.4em;line-height:.82;padding:.06em .08em 0 0;color:var(--crimson)}
+.prose p.dlg{text-indent:0}
+.plume{color:var(--muted);font-style:italic;text-align:center;padding:24px 0}
+.plume::after{content:"";display:inline-block;width:1.2em;text-align:left;animation:pts 1.4s steps(4) infinite}
+@keyframes pts{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+.fleuron{text-align:center;color:var(--rule);letter-spacing:1em;margin:32px auto 0;font-size:.9rem}
+
+.decision{margin-top:36px;border-top:1px solid var(--rule);padding-top:26px;display:grid;gap:14px}
+.decision h4{margin:0;font-family:var(--f-display);font-weight:500;font-style:italic;font-size:1.35rem}
+.choix{display:grid;gap:8px}
+.choix button{text-align:left;background:transparent;border:1px solid var(--rule);padding:12px 14px 12px 44px;cursor:pointer;position:relative;line-height:1.4;font-size:.98rem}
+.choix button::before{content:attr(data-l);position:absolute;left:14px;top:12px;font-family:var(--f-mono);font-size:.75rem;color:var(--brass)}
+.choix button:hover{border-color:var(--ink);background:var(--stamp)}
+.libre{display:flex;gap:8px;align-items:stretch}
+.libre input{flex:1;min-width:0;border:1px solid var(--rule);background:transparent;padding:10px 12px}
+.libre input:focus{border-color:var(--ink);outline:none}
+.barre{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+
+.verdict{margin-top:36px;border:2px solid var(--crimson);padding:22px 24px;display:grid;gap:10px;text-align:center}
+.verdict .gros{font-family:var(--f-display);font-size:1.8rem;font-style:italic;color:var(--crimson);line-height:1.1}
+.verdict .score{font-family:var(--f-mono);font-size:.85rem;letter-spacing:.1em}
+.solution{margin-top:28px;font-size:.95rem;display:grid;gap:10px}
+.solution h4{font-family:var(--f-display);font-weight:500;font-size:1.3rem;margin:0}
+.solution dl{margin:0;display:grid;gap:8px}
+.solution dt{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.solution dd{margin:0}
+
+/* Carnet */
+.carnet{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);display:grid;gap:22px;max-height:calc(100vh - 32px);overflow:auto;padding-right:4px}
+.carnet section{display:grid;gap:10px}
+.carnet h3{margin:0;font-family:var(--f-mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;border-bottom:1px solid var(--rule);padding-bottom:6px}
+.carnet h3 b{color:var(--crimson);font-weight:500}
+.fiche{display:grid;gap:2px;font-size:.9rem;line-height:1.4}
+.fiche b{font-weight:600}
+.fiche span{color:var(--muted)}
+.indice{font-size:.9rem;line-height:1.4;padding-left:16px;position:relative}
+.indice::before{content:"";position:absolute;left:0;top:.45em;width:7px;height:7px;border:1.5px solid var(--brass);transform:rotate(45deg)}
+.indice.neuf::before{background:var(--brass)}
+.indice b{font-weight:600;display:block}
+.vide{color:var(--muted);font-size:.88rem;font-style:italic}
+.carnet textarea{min-height:110px;font-size:.9rem}
+.etat{font-size:.88rem;color:var(--muted);display:grid;gap:2px}
+.etat b{color:var(--ink);font-weight:600}
+
+.bouton-carnet{display:none}
+@media (max-width:960px){
+  .carnet{display:none;position:fixed;inset:auto 0 0 0;max-height:78vh;background:var(--page);border-top:1px solid var(--rule);z-index:20;box-shadow:0 -20px 40px -20px #0006;
+    padding:20px max(16px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+  body.carnet-ouvert .carnet{display:grid}
+  .bouton-carnet{display:block;position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:21;box-shadow:var(--shadow)}
+}
+
+/* Accusation */
+.voile{position:fixed;inset:0;background:#0b0d12b3;z-index:40;display:grid;place-items:center;padding:16px}
+.accuse{background:var(--page);border:1px solid var(--rule);max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:28px;display:grid;gap:18px}
+.accuse h3{margin:0;font-family:var(--f-display);font-style:italic;font-weight:500;font-size:1.7rem}
+.accuse .chips{display:grid;gap:6px}
+.accuse .chips label{display:grid;gap:2px}
+.accuse .chips label small{opacity:.75}
+.accuse .barre{justify-content:flex-end}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <h1><a href="#" id="retour-accueil">Cabinet <span>Noir</span></a></h1>
+    <span class="mono">Bureau des enquêtes romanesques</span>
+  </header>
+
+  <!-- ACCUEIL -->
+  <main id="vue-accueil" class="accueil">
+    <div class="intro">
+      <span class="mono" style="color:var(--crimson)">Romans policiers à embranchements</span>
+      <h2>Un crime inédit, écrit pour vous. <em>À vous de le résoudre.</em></h2>
+      <p class="lede">Choisissez une époque, un ton et votre enquêteur. Claude imagine un dossier secret (victime, suspects, mensonges, indices) puis vous raconte l'affaire chapitre par chapitre. Chaque décision oriente le récit. Quand vous pensez tenir le coupable, réunissez tout le monde et accusez.</p>
+      <div class="extrait">
+        <span class="tampon">EXEMPLE</span>
+        <span class="mono">Exemple d'ouverture · Lisbonne, 1958</span>
+        <p>La pluie avait rendu les pavés de l'Alfama aussi glissants que les promesses du directeur de l'hôtel. Vous refermez votre parapluie sous l'auvent du Palácio Serrano, où un portier livide vous attend depuis une heure.</p>
+        <p>— Chambre 312, souffle-t-il. Le señor Ortega. Personne n'a rien entendu.</p>
+        <p>Personne n'entend jamais rien, dans ce genre d'établissement. C'est précisément ce qui vous intéresse.</p>
+      </div>
+      <div class="biblio" id="biblio" hidden>
+        <h3>Vos enquêtes</h3>
+        <ul id="biblio-liste"></ul>
+      </div>
+    </div>
+
+    <form class="form" id="form-nouvelle" autocomplete="off">
+      <h3>Ouvrir un nouveau dossier</h3>
+      <div class="champ">
+        <span class="lab">Cadre</span>
+        <div class="chips" id="ch-cadre"></div>
+        <input class="txt" id="cadre-libre" placeholder="Ou décrivez votre propre cadre…" maxlength="160">
+      </div>
+      <div class="champ">
+        <span class="lab">Ton</span>
+        <div class="chips" id="ch-ton"></div>
+      </div>
+      <div class="champ">
+        <span class="lab">Difficulté</span>
+        <div class="chips" id="ch-diff"></div>
+      </div>
+      <div class="champ">
+        <span class="lab">Longueur</span>
+        <div class="chips" id="ch-long"></div>
+      </div>
+      <div class="champ">
+        <span class="lab">Narration</span>
+        <div class="chips" id="ch-pdv"></div>
+      </div>
+      <div class="champ">
+        <label for="detective">Votre enquêteur ou enquêtrice</label>
+        <input class="txt" id="detective" value="Hélène Varga" maxlength="60">
+      </div>
+      <div class="champ">
+        <label for="idee">Une idée de départ ? (facultatif)</label>
+        <textarea class="txt" id="idee" maxlength="400" placeholder="Ex. : un chef étoilé empoisonné pendant son propre banquet"></textarea>
+      </div>
+      <div id="avis-accueil" class="avis" hidden></div>
+      <div class="barre">
+        <button class="btn" type="submit" id="btn-creer">Ouvrir l'enquête</button>
+        <button class="lien" type="button" id="btn-stop-creer" hidden>Annuler</button>
+      </div>
+    </form>
+  </main>
+
+  <!-- ENQUÊTE -->
+  <main id="vue-enquete" class="enquete" hidden>
+    <div class="livre" id="livre">
+      <div class="dossier-tete">
+        <span class="mono" id="d-numero"></span>
+        <h2 id="d-titre"></h2>
+        <p id="d-sous"></p>
+      </div>
+      <div id="chapitres"></div>
+      <div id="zone-action"></div>
+    </div>
+
+    <aside class="carnet" id="carnet" aria-label="Carnet d'enquête">
+      <section>
+        <h3>Situation</h3>
+        <div class="etat" id="etat"></div>
+      </section>
+      <section>
+        <h3>Personnages <b id="nb-suspects"></b></h3>
+        <div id="suspects" style="display:grid;gap:10px"></div>
+      </section>
+      <section>
+        <h3>Indices <b id="nb-indices"></b></h3>
+        <div id="indices" style="display:grid;gap:10px"></div>
+      </section>
+      <section>
+        <h3>Mes notes</h3>
+        <textarea class="txt" id="notes" placeholder="Vos soupçons, les contradictions repérées…"></textarea>
+      </section>
+      <section>
+        <h3>Dossier</h3>
+        <div style="display:grid;gap:8px;justify-items:start">
+          <button class="btn small" type="button" id="btn-accuser">Désigner le coupable</button>
+          <button class="lien" type="button" id="btn-reveler">Abandonner et lire la solution</button>
+        </div>
+      </section>
+    </aside>
+    <button class="btn bouton-carnet" type="button" id="bouton-carnet">Carnet</button>
+  </main>
+</div>
+
+<div class="voile" id="voile" hidden>
+  <form class="accuse" id="form-accuse">
+    <h3>Qui est coupable ?</h3>
+    <div class="chips" id="ch-accuse"></div>
+    <div class="champ">
+      <label for="raisonnement">Votre raisonnement : mobile, méthode, indices</label>
+      <textarea class="txt" id="raisonnement" rows="5" maxlength="1500" placeholder="Il avait menti sur l'heure de son retour : la boue sur ses chaussures…"></textarea>
+    </div>
+    <div class="barre">
+      <button class="btn ghost" type="button" id="btn-annuler-accuse">Pas encore</button>
+      <button class="btn" type="submit" id="btn-confirmer-accuse">Accuser</button>
+    </div>
+  </form>
+</div>
+
+<script>
+(() => {
+"use strict";
+const $ = s => document.querySelector(s);
+function h(tag, attrs, ...kids){
+  const el = document.createElement(tag);
+  if (attrs) for (const [k,v] of Object.entries(attrs)){
+    if (v == null || v === false) continue;
+    if (k === "class") el.className = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (k === "text") el.textContent = v;
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) el.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  return el;
+}
+
+/* ---------- Options ---------- */
+const OPTIONS = {
+  cadre: ["Paris, 1925, les Années folles","Manoir de campagne anglais, 1932","Venise pendant le carnaval, 1789","Hôtel de luxe à Lisbonne, 1958","Studio de cinéma à Hollywood, 1947","Village breton, de nos jours","Station polaire en Antarctique, 2031","Paquebot transatlantique, 1912"],
+  ton: ["Classique (énigme)","Noir (polar sombre)","Cosy (léger, chaleureux)","Gothique (inquiétant)"],
+  diff: ["Facile","Normale","Retorse"],
+  long: ["Courte (5 chapitres)","Moyenne (8 chapitres)","Longue (12 chapitres)"],
+  pdv: ["« Vous », au présent","« Je », au passé","Troisième personne"]
+};
+const CIBLE = {"Courte (5 chapitres)":5,"Moyenne (8 chapitres)":8,"Longue (12 chapitres)":12};
+const DEFAUT = {cadre:3, ton:0, diff:1, long:0, pdv:0};
+const MOTIFS = ["un parapluie oublié","une horloge arrêtée","une lettre brûlée","un héritage contesté","un faux tableau","une recette secrète","un chien qui n'a pas aboyé","un billet de train","un mariage annulé","une dette de jeu","un poison végétal","une photo découpée","une porte murée","un testament récent","un parfum rare","une partition annotée","un jumeau","une clé en double","une panne d'électricité","un pari stupide"];
+
+function chips(id, name, list, def){
+  const box = $(id);
+  list.forEach((label, i) => {
+    const iid = name + "-" + i;
+    box.append(h("input",{type:"radio",name,id:iid,value:label,checked:i===def}), h("label",{for:iid,text:label}));
+  });
+}
+chips("#ch-cadre","cadre",OPTIONS.cadre,DEFAUT.cadre);
+chips("#ch-ton","ton",OPTIONS.ton,DEFAUT.ton);
+chips("#ch-diff","diff",OPTIONS.diff,DEFAUT.diff);
+chips("#ch-long","long",OPTIONS.long,DEFAUT.long);
+chips("#ch-pdv","pdv",OPTIONS.pdv,DEFAUT.pdv);
+const val = n => (document.querySelector(`input[name="${n}"]:checked`)||{}).value;
+
+/* ---------- Stockage (navigateur du lecteur) ---------- */
+const CLE = "cabinet-noir-v1";
+function lireTout(){ try { return JSON.parse(localStorage.getItem(CLE)) || {liste:{}}; } catch { return {liste:{}}; } }
+function ecrireTout(d){ try { localStorage.setItem(CLE, JSON.stringify(d)); } catch {} }
+function sauver(){ if(!S) return; const d = lireTout(); S.maj = Date.now(); d.liste[S.id] = S; d.courante = S.id; ecrireTout(d); }
+
+/* ---------- Claude ---------- */
+let sampleFn = null, sampleEtat = "attente";
+const sampleP = (window.claude && window.claude.use) ? window.claude.use("sample") : Promise.resolve(null);
+sampleP.then(f => { sampleFn = f; sampleEtat = f ? "ok" : "absent"; if(!f) indisponible(); }).catch(() => { sampleEtat = "absent"; indisponible(); });
+async function getSample(){ if (sampleEtat === "attente") await sampleP.catch(()=>{}); return sampleFn; }
+function indisponible(){
+  const a = $("#avis-accueil");
+  a.hidden = false;
+  a.textContent = "La génération d'enquêtes passe par Claude : ouvrez cette page sur claude.ai, connecté·e à votre compte, pour écrire de nouvelles affaires.";
+  $("#btn-creer").disabled = true;
+}
+function messageErreur(e){
+  switch (e && e.code){
+    case "not_granted": return "Vous n'avez pas autorisé la page à utiliser Claude. Rechargez-la pour qu'on vous le redemande.";
+    case "rate_limited": return e.reason === "usage_limit" ? "Vous avez atteint votre limite d'utilisation de Claude. Réessayez plus tard." : "Trop de demandes d'un coup. Attendez un instant puis réessayez.";
+    case "session_expired": return "Votre session a expiré : reconnectez-vous à claude.ai.";
+    case "sampling_disabled": return "Claude n'est pas disponible pour ce compte.";
+    case "invalid_json": return "Le dossier reçu était mal formé. Réessayez.";
+    case "refused": return "Claude a refusé d'écrire cette scène. Essayez une autre action.";
+    default: return "La plume a dérapé (erreur de connexion). Réessayez.";
+  }
+}
+
+/* ---------- État de l'enquête ---------- */
+let S = null, ctl = null, occupe = false;
+
+function numeroDossier(){ const d = new Date(); return "Dossier n° " + String(d.getFullYear()).slice(2) + "-" + String(Math.floor(Math.random()*900)+100) + "-" + "ABCDEFGHJK"[Math.floor(Math.random()*10)]; }
+function pick(a,n){ const c=[...a], r=[]; while(r.length<n && c.length) r.push(c.splice(Math.floor(Math.random()*c.length),1)[0]); return r; }
+
+function promptDossier(p){
+  const nbS = p.diff === "Facile" ? 4 : p.diff === "Retorse" ? 6 : 5;
+  const nbI = p.diff === "Facile" ? 6 : p.diff === "Retorse" ? 10 : 8;
+  return `Tu es un auteur de romans policiers à énigme, rigoureux et inventif. Conçois en secret une enquête ORIGINALE (aucun personnage, intrigue ou détective existant) qui servira de base à un roman interactif en français.
+
+Paramètres :
+- Cadre : ${p.cadre}
+- Ton : ${p.ton}
+- Difficulté : ${p.diff}
+- Enquêteur·rice (le personnage du lecteur, ne peut pas être coupable) : ${p.detective}
+- Idée de départ du lecteur : ${p.idee || "aucune, invente librement"}
+- Motifs d'inspiration à intégrer discrètement : ${p.motifs.join(", ")}
+
+Exigences :
+- Exactement ${nbS} suspects, dont un seul coupable. Chacun a un mobile plausible et un secret (souvent sans rapport avec le meurtre), ce qui crée des fausses pistes.
+- ${nbI} indices au total, dont 2 ou 3 fausses pistes. Le coupable doit pouvoir être démasqué par déduction loyale à partir des vrais indices.${p.diff === "Retorse" ? " La solution doit être surprenante mais juste : un détail anodin doit tout faire basculer." : ""}${p.diff === "Facile" ? " Les indices décisifs doivent être assez clairs." : ""}
+- La chronologie doit être cohérente et sans trou.
+
+Réponds uniquement avec un objet JSON de cette forme :
+{"titre":"titre de roman évocateur","accroche":"une phrase de quatrième de couverture","cadre":"lieu et époque précis","victime":{"nom":"","description":""},"crime":"ce que tout le monde sait au début de l'enquête","suspects":[{"nom":"","role":"lien avec la victime, en quelques mots","description":"apparence et caractère, ce qu'on voit d'eux","mobile":"","secret":"","alibi":"ce qu'ils prétendent","verite":"ce qu'ils ont réellement fait"}],"coupable":"nom exact d'un des suspects","mobile":"le vrai mobile","methode":"comment le crime a été commis","chronologie":"déroulé réel des faits, heure par heure","indices":[{"description":"","lieu":"où on peut le trouver ou qui peut le révéler","signification":"ce qu'il prouve vraiment","fausse_piste":false}],"cle":"le raisonnement qui mène au coupable"}`;
+}
+
+const VUE = {
+  "« Vous », au présent": "à la deuxième personne du pluriel, au présent (« vous entrez… ») : le lecteur EST l'enquêteur·rice",
+  "« Je », au passé": "à la première personne, au passé (passé simple et imparfait), du point de vue de l'enquêteur·rice",
+  "Troisième personne": "à la troisième personne, au passé (passé simple et imparfait), en suivant l'enquêteur·rice"
+};
+
+function promptChapitre(action, n){
+  const p = S.params, cible = CIBLE[p.long] || 8;
+  const dernier = S.chapitres.length ? S.chapitres[S.chapitres.length-1].texte.slice(-2500) : "";
+  let rythme;
+  if (n === 1) rythme = "C'est le chapitre d'ouverture : installe l'atmosphère, présente l'enquêteur·rice, le crime et la victime, et fais apparaître par leur nom la plupart des suspects. Pas d'indice décisif encore.";
+  else if (n >= cible) rythme = "L'enquête approche de son terme : les indices essentiels doivent maintenant être accessibles. L'un des trois choix doit être exactement « Réunir les suspects et désigner le coupable ».";
+  else if (n >= cible - 2) rythme = "On entre dans le dernier tiers : fais monter la tension, un rebondissement est bienvenu, et commence à rendre accessibles les indices décisifs.";
+  else rythme = "Milieu d'enquête : fais avancer l'enquête, révèle des mensonges ou des secrets, alterne vrais indices et fausses pistes.";
+  return `Tu écris, en français, un roman policier interactif. Le lecteur dirige l'enquêteur·rice ${p.detective}.
+
+DOSSIER SECRET (pour toi seul : ne révèle jamais directement le coupable ni la clé ; le lecteur doit déduire) :
+${JSON.stringify(S.dossier)}
+
+Style : ton ${p.ton}. Narration ${VUE[p.pdv] || VUE["« Vous », au présent"]}. Prose de roman soignée, sensorielle, avec des dialogues introduits par des tirets cadratins (—). Évite les clichés et le remplissage.
+
+Résumé de l'histoire jusqu'ici : ${S.resume || "(début de l'histoire)"}
+Indices déjà découverts : ${S.indices.map(i => i.titre + " : " + i.detail).join(" | ") || "aucun"}
+${dernier ? "Fin du chapitre précédent :\n" + dernier + "\n" : ""}
+Action choisie par le lecteur : « ${action} »
+
+Écris le chapitre ${n} (environ 450 à 600 mots). Règles :
+- Raconte ce que produit l'action du lecteur, de façon cohérente avec le dossier secret : les suspects mentent ou se trahissent selon leur fiche, les indices sont là où le dossier les place.
+- Fais découvrir 0, 1 ou 2 indices du dossier, uniquement s'ils sont logiquement accessibles par cette action. Décris-les dans le récit sans les interpréter à la place du lecteur.
+- Si l'action est impossible ou absurde, raconte-le avec élégance et réoriente l'enquête.
+- Ne conclus jamais l'enquête : c'est le lecteur qui accusera.
+- ${rythme}
+
+Format de réponse EXACT, sans rien d'autre :
+# Titre du chapitre
+Texte du chapitre, paragraphes séparés par une ligne vide, sans markdown (ni astérisques, ni gras).
+@@@
+{"resume":"résumé cumulatif de TOUTE l'histoire jusqu'à ce chapitre inclus, 8 phrases au plus","indices":[{"titre":"2 à 5 mots","detail":"une phrase factuelle"}],"choix":["action 1","action 2","action 3"],"lieu":"lieu actuel","moment":"jour et heure dans le récit"}
+
+"indices" contient uniquement les NOUVEAUX indices de ce chapitre (liste vide sinon). Les 3 choix sont des actions concrètes et variées (interroger quelqu'un de précis, fouiller un lieu, vérifier un alibi, tendre un piège…), à l'infinitif, sans dévoiler la solution.`;
+}
+
+function promptDenouement(accuse, raison){
+  const p = S.params, juste = norm(accuse) === norm(S.dossier.coupable);
+  return `Tu écris, en français, le dernier chapitre d'un roman policier interactif. Enquêteur·rice : ${p.detective}. Ton : ${p.ton}. Narration ${VUE[p.pdv] || VUE["« Vous », au présent"]}.
+
+DOSSIER COMPLET : ${JSON.stringify(S.dossier)}
+Résumé de l'histoire : ${S.resume}
+Indices trouvés par le lecteur : ${S.indices.map(i => i.titre + " : " + i.detail).join(" | ") || "aucun"}
+
+Le lecteur réunit les suspects et accuse : ${accuse}.
+Son raisonnement : « ${raison || "(aucune explication donnée)"} »
+Cette accusation est ${juste ? "JUSTE" : "FAUSSE : le vrai coupable est " + S.dossier.coupable}.
+
+Écris le chapitre final (600 à 800 mots), une scène de révélation digne d'un grand roman à énigme. ${juste
+ ? "Le coupable est confondu : reprends le raisonnement du lecteur, complète-le avec la vraie méthode et le mobile, et laisse le coupable réagir."
+ : "L'accusé se défend et prouve son innocence ; la scène tourne mal pour l'enquêteur·rice, puis la vérité éclate quand même (révèle le vrai coupable, sa méthode, son mobile)."}
+Termine par une dernière image qui clôt l'histoire.
+
+Format de réponse EXACT :
+# Titre du chapitre
+Texte, paragraphes séparés par une ligne vide, sans markdown.
+@@@
+{"score":0,"commentaire":"deux phrases adressées au lecteur (vouvoiement) sur la qualité de son raisonnement : ce qu'il a bien vu, ce qu'il a manqué"}
+où "score" (0 à 100) note la justesse du raisonnement du lecteur : coupable, mobile, méthode et usage des indices.`;
+}
+
+const norm = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim();
+
+/* ---------- Analyse des réponses ---------- */
+function decouper(text){
+  const i = text.indexOf("@@@");
+  let corps = i >= 0 ? text.slice(0,i) : text.replace(/@{1,2}\s*$/,"");
+  let meta = null;
+  if (i >= 0){
+    const brut = text.slice(i+3);
+    const a = brut.indexOf("{"), b = brut.lastIndexOf("}");
+    if (a >= 0 && b > a){ try { meta = JSON.parse(brut.slice(a,b+1)); } catch {} }
+  }
+  corps = corps.replace(/\r/g,"").trim();
+  let titre = "";
+  const m = corps.match(/^#+\s*(.+)\n?/);
+  if (m){ titre = m[1].trim(); corps = corps.slice(m[0].length).trim(); }
+  corps = corps.replace(/\*\*?|__/g,"");
+  return {titre, texte:corps, meta};
+}
+
+function prose(texte){
+  const box = h("div",{class:"prose"});
+  texte.split(/\n\s*\n|\n(?=—|–|-\s)/).map(t => t.replace(/\n/g," ").trim()).filter(Boolean).forEach(t => {
+    if (/^[-–]\s/.test(t)) t = "— " + t.replace(/^[-–]\s*/,"");
+    box.append(h("p",{class: t.startsWith("—") ? "dlg" : null, text:t}));
+  });
+  return box;
+}
+
+/* ---------- Rendu ---------- */
+function montrer(vue){
+  $("#vue-accueil").hidden = vue !== "accueil";
+  $("#vue-enquete").hidden = vue !== "enquete";
+  document.body.classList.remove("carnet-ouvert");
+  if (vue === "accueil") renderBiblio();
+  window.scrollTo({top:0});
+}
+
+function renderBiblio(){
+  const d = lireTout(), items = Object.values(d.liste).sort((a,b)=>b.maj-a.maj);
+  $("#biblio").hidden = !items.length;
+  const ul = $("#biblio-liste"); ul.textContent = "";
+  for (const e of items){
+    let armed = false;
+    const del = h("button",{class:"btn small ghost",type:"button",text:"Supprimer"});
+    del.addEventListener("click",() => {
+      if (!armed){ armed = true; del.textContent = "Confirmer ?"; setTimeout(()=>{armed=false; del.textContent="Supprimer";},3000); return; }
+      const dd = lireTout(); delete dd.liste[e.id]; if (dd.courante===e.id) delete dd.courante; ecrireTout(dd); renderBiblio();
+    });
+    ul.append(h("li",null,
+      h("div",{class:"t"}, h("b",{text:e.dossier.titre}), h("small",{text:`${e.statut==="close" ? "Affaire classée" : "En cours"} · ${e.chapitres.length} chapitre${e.chapitres.length>1?"s":""} · ${e.params.cadre}`})),
+      h("div",{class:"acts"}, h("button",{class:"btn small",type:"button",text:e.statut==="close"?"Relire":"Reprendre",onclick:()=>ouvrir(e.id)}), del)
+    ));
+  }
+}
+
+function ouvrir(id){
+  const d = lireTout(); if (!d.liste[id]) return;
+  S = d.liste[id]; d.courante = id; ecrireTout(d);
+  montrer("enquete"); renderEnquete();
+}
+
+function renderEnquete(){
+  $("#d-numero").textContent = S.numero;
+  $("#d-titre").textContent = S.dossier.titre;
+  $("#d-sous").textContent = S.dossier.accroche || S.dossier.cadre;
+  const box = $("#chapitres"); box.textContent = "";
+  S.chapitres.forEach((c,i) => box.append(chapitreEl(c,i)));
+  renderCarnet();
+  renderAction();
+}
+
+function chapitreEl(c, i){
+  return h("article",{class:"chap"},
+    c.action && i>0 ? h("p",{class:"choisi",text:"Votre choix : " + c.action}) : null,
+    h("span",{class:"mono",text: c.final ? "Dénouement" : "Chapitre " + romain(i+1)}),
+    h("h3",{text:c.titre || "Sans titre"}),
+    prose(c.texte));
+}
+function romain(n){ const t=[[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]]; let r=""; for(const [v,s] of t) while(n>=v){r+=s;n-=v;} return n===0? r : r; }
+
+function renderCarnet(){
+  const et = $("#etat"); et.textContent = "";
+  const cible = CIBLE[S.params.long] || 8;
+  et.append(
+    h("div",null,"Lieu : ", h("b",{text:S.lieu || S.dossier.cadre})),
+    h("div",null,"Moment : ", h("b",{text:S.moment || "—"})),
+    h("div",null,"Avancée : ", h("b",{text: S.statut==="close" ? "affaire classée" : `chapitre ${S.chapitres.length} sur environ ${cible}`})));
+  const su = $("#suspects"); su.textContent = "";
+  su.append(h("div",{class:"fiche"}, h("b",{text:"Victime : " + S.dossier.victime.nom}), h("span",{text:S.dossier.victime.description})));
+  S.dossier.suspects.forEach(s => su.append(h("div",{class:"fiche"}, h("b",{text:s.nom}), h("span",{text:s.role}))));
+  $("#nb-suspects").textContent = S.dossier.suspects.length + " suspects";
+  const ind = $("#indices"); ind.textContent = "";
+  if (!S.indices.length) ind.append(h("p",{class:"vide",text:"Aucun indice pour l'instant. Ils s'inscriront ici au fil de l'enquête."}));
+  S.indices.forEach(i => ind.append(h("div",{class:"indice" + (i.ch === S.chapitres.length ? " neuf":"")}, h("b",{text:i.titre}), i.detail)));
+  $("#nb-indices").textContent = S.indices.length || "";
+  $("#bouton-carnet").textContent = "Carnet" + (S.indices.length ? ` · ${S.indices.length} indice${S.indices.length>1?"s":""}` : "");
+  $("#notes").value = S.notes || "";
+  const close = S.statut === "close";
+  $("#btn-accuser").hidden = close; $("#btn-reveler").hidden = close;
+}
+
+function renderAction(msg){
+  const z = $("#zone-action"); z.textContent = "";
+  if (S.statut === "close"){ z.append(verdictEl()); return; }
+  if (!S.chapitres.length){
+    z.append(h("div",{class:"decision"}, msg ? h("div",{class:"avis",text:msg}) : null,
+      h("button",{class:"btn",type:"button",text:"Commencer le premier chapitre",onclick:()=>ecrire("Ouverture de l'enquête")})));
+    return;
+  }
+  const lettres = "ABC";
+  const choix = (S.choix && S.choix.length ? S.choix : ["Interroger le témoin le plus nerveux","Fouiller à nouveau la scène du crime","Relire vos notes et confronter les alibis"]).slice(0,3);
+  const input = h("input",{id:"action-libre",placeholder:"Ou écrivez votre propre action…",maxlength:"300"});
+  const go = () => { const v = input.value.trim(); if (v) ecrire(v); };
+  input.addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); go(); } });
+  z.append(h("div",{class:"decision"},
+    msg ? h("div",{class:"avis",text:msg}) : null,
+    h("h4",{text:"Que faites-vous ?"}),
+    h("div",{class:"choix"}, choix.map((c,i) => h("button",{type:"button","data-l":lettres[i],text:c,onclick:()=> /coupable|accuser/i.test(c) ? ouvrirAccusation() : ecrire(c)}))),
+    h("div",{class:"libre"}, input, h("button",{class:"btn",type:"button",text:"Agir",onclick:go})),
+    S.chapitres.length >= 2 ? h("div",{class:"barre"}, h("span",{class:"vide",text:"Vous pensez savoir qui a fait le coup ?"}), h("button",{class:"btn small ghost",type:"button",text:"Désigner le coupable",onclick:ouvrirAccusation})) : null
+  ));
+}
+
+function verdictEl(){
+  const v = S.verdict, box = h("div");
+  if (v){
+    box.append(h("div",{class:"verdict"},
+      h("span",{class:"mono",text: v.abandon ? "Dossier refermé" : "Verdict"}),
+      h("div",{class:"gros",text: v.abandon ? "Solution consultée" : v.juste ? "Coupable démasqué" : "Erreur judiciaire"}),
+      v.score != null ? h("div",{class:"score",text:`Raisonnement : ${v.score} / 100`}) : null,
+      v.commentaire ? h("p",{style:"margin:0",text:v.commentaire}) : null));
+  }
+  const D = S.dossier;
+  box.append(h("div",{class:"solution"},
+    h("h4",{text:"Le dossier secret"}),
+    h("dl",null,
+      h("dt",{text:"Coupable"}), h("dd",{text:D.coupable}),
+      h("dt",{text:"Mobile"}), h("dd",{text:D.mobile}),
+      h("dt",{text:"Méthode"}), h("dd",{text:D.methode}),
+      h("dt",{text:"Chronologie"}), h("dd",{text:D.chronologie}),
+      h("dt",{text:"La clé"}), h("dd",{text:D.cle}),
+      ...D.suspects.flatMap(s => [h("dt",{text:s.nom}), h("dd",{text:`Secret : ${s.secret}. En réalité : ${s.verite}`})])
+    )),
+    h("div",{class:"barre",style:"margin-top:24px"}, h("button",{class:"btn",type:"button",text:"Nouvelle enquête",onclick:()=>montrer("accueil")})));
+  return box;
+}
+
+/* ---------- Actions ---------- */
+function stopBouton(){ return h("button",{class:"lien",type:"button",text:"Arrêter",onclick:()=>ctl && ctl.abort()}); }
+
+async function ecrire(action){
+  if (occupe) return;
+  const sample = await getSample();
+  if (!sample){ renderAction("La génération passe par Claude : ouvrez cette page sur claude.ai, connecté·e."); return; }
+  occupe = true;
+  const n = S.chapitres.length + 1;
+  const art = h("article",{class:"chap"},
+    n>1 ? h("p",{class:"choisi",text:"Votre choix : " + action}) : null,
+    h("span",{class:"mono",text:"Chapitre " + romain(n)}),
+    h("h3",{text:"…"}));
+  const corps = h("div",null,h("p",{class:"plume",text:"La plume gratte le papier"}));
+  art.append(corps);
+  $("#chapitres").append(art);
+  $("#zone-action").textContent = "";
+  $("#zone-action").append(h("div",{class:"decision"}, h("div",{class:"barre"}, h("span",{class:"vide",text:"Écriture du chapitre…"}), stopBouton())));
+  art.scrollIntoView({behavior:"smooth",block:"start"});
+  ctl = new AbortController();
+  try{
+    const {text} = await sample(promptChapitre(action, n), {signal:ctl.signal, cache:false, onText:({text}) => {
+      const d = decouper(text);
+      if (d.titre) art.querySelector("h3").textContent = d.titre;
+      if (d.texte) corps.replaceChildren(prose(d.texte));
+    }});
+    const d = decouper(text);
+    const m = d.meta || {};
+    S.chapitres.push({titre:d.titre, texte:d.texte, action});
+    if (m.resume) S.resume = String(m.resume);
+    if (Array.isArray(m.indices)) for (const i of m.indices){
+      if (!i || !i.titre) continue;
+      if (!S.indices.some(x => norm(x.titre) === norm(i.titre))) S.indices.push({titre:String(i.titre), detail:String(i.detail||""), ch:n});
+    }
+    S.choix = Array.isArray(m.choix) ? m.choix.map(String).filter(Boolean) : [];
+    if (m.lieu) S.lieu = String(m.lieu);
+    if (m.moment) S.moment = String(m.moment);
+    sauver(); occupe = false;
+    art.replaceWith(chapitreEl(S.chapitres[n-1], n-1));
+    renderCarnet(); renderAction();
+  } catch(e){
+    occupe = false; art.remove();
+    renderAction(e && e.code === "cancelled" ? "Chapitre interrompu. Choisissez à nouveau." : messageErreur(e));
+  }
+}
+
+async function creer(ev){
+  ev.preventDefault();
+  if (occupe) return;
+  const sample = await getSample();
+  if (!sample){ indisponible(); return; }
+  const params = {
+    cadre: $("#cadre-libre").value.trim() || val("cadre"), ton: val("ton"), diff: val("diff"), long: val("long"), pdv: val("pdv"),
+    detective: $("#detective").value.trim() || "l'enquêtrice", idee: $("#idee").value.trim(), motifs: pick(MOTIFS,2)
+  };
+  occupe = true;
+  const btn = $("#btn-creer"), stop = $("#btn-stop-creer"), avis = $("#avis-accueil");
+  btn.disabled = true; btn.textContent = "Le crime se prépare…"; stop.hidden = false; avis.hidden = true;
+  ctl = new AbortController();
+  stop.onclick = () => ctl.abort();
+  try{
+    const dossier = await sample.json(promptDossier(params), {signal:ctl.signal, cache:false});
+    if (!dossier || !Array.isArray(dossier.suspects) || !dossier.suspects.length || !dossier.coupable || !dossier.victime) throw {code:"invalid_json"};
+    S = {id: "e" + Date.now().toString(36), numero: numeroDossier(), params, dossier, chapitres:[], indices:[], choix:[], resume:"", notes:"", statut:"en_cours", cree:Date.now()};
+    sauver(); occupe = false;
+    montrer("enquete"); renderEnquete();
+    ecrire("Ouverture de l'enquête");
+  } catch(e){
+    occupe = false;
+    if (!(e && e.code === "cancelled")){ avis.hidden = false; avis.textContent = messageErreur(e); }
+  } finally {
+    btn.disabled = false; btn.textContent = "Ouvrir l'enquête"; stop.hidden = true;
+  }
+}
+
+function ouvrirAccusation(){
+  if (occupe || !S || S.statut === "close") return;
+  const box = $("#ch-accuse"); box.textContent = "";
+  S.dossier.suspects.forEach((s,i) => {
+    const id = "acc-" + i;
+    box.append(h("input",{type:"radio",name:"accuse",id,value:s.nom,checked:i===0}), h("label",{for:id}, s.nom, h("small",{text:s.role})));
+  });
+  $("#voile").hidden = false;
+  document.body.classList.remove("carnet-ouvert");
+  $("#raisonnement").focus();
+}
+function fermerAccusation(){ $("#voile").hidden = true; }
+
+async function accuser(ev){
+  ev.preventDefault();
+  const accuse = val("accuse"), raison = $("#raisonnement").value.trim();
+  if (!accuse) return;
+  const sample = await getSample();
+  if (!sample) return;
+  fermerAccusation();
+  occupe = true;
+  const art = h("article",{class:"chap"}, h("p",{class:"choisi",text:`Vous accusez ${accuse}.`}), h("span",{class:"mono",text:"Dénouement"}), h("h3",{text:"…"}));
+  const corps = h("div",null,h("p",{class:"plume",text:"Tout le monde retient son souffle"}));
+  art.append(corps); $("#chapitres").append(art);
+  $("#zone-action").replaceChildren(h("div",{class:"decision"}, h("div",{class:"barre"}, h("span",{class:"vide",text:"Écriture du dénouement…"}), stopBouton())));
+  art.scrollIntoView({behavior:"smooth",block:"start"});
+  ctl = new AbortController();
+  try{
+    const {text} = await sample(promptDenouement(accuse, raison), {signal:ctl.signal, cache:false, onText:({text}) => {
+      const d = decouper(text);
+      if (d.titre) art.querySelector("h3").textContent = d.titre;
+      if (d.texte) corps.replaceChildren(prose(d.texte));
+    }});
+    const d = decouper(text), m = d.meta || {};
+    S.chapitres.push({titre:d.titre, texte:d.texte, action:`Vous accusez ${accuse}.`, final:true});
+    S.statut = "close";
+    S.verdict = {juste: norm(accuse) === norm(S.dossier.coupable), accuse, score: Number.isFinite(+m.score) ? Math.max(0,Math.min(100,Math.round(+m.score))) : null, commentaire: m.commentaire ? String(m.commentaire) : ""};
+    sauver(); occupe = false;
+    art.replaceWith(chapitreEl(S.chapitres[S.chapitres.length-1], S.chapitres.length-1));
+    renderCarnet(); renderAction();
+  } catch(e){
+    occupe = false; art.remove();
+    renderAction(e && e.code === "cancelled" ? "Accusation retirée. L'enquête continue." : messageErreur(e));
+  }
+}
+
+/* ---------- Liaisons ---------- */
+$("#form-nouvelle").addEventListener("submit", creer);
+$("#form-accuse").addEventListener("submit", accuser);
+$("#btn-annuler-accuse").addEventListener("click", fermerAccusation);
+$("#voile").addEventListener("click", e => { if (e.target.id === "voile") fermerAccusation(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#voile").hidden) fermerAccusation(); });
+$("#btn-accuser").addEventListener("click", ouvrirAccusation);
+$("#bouton-carnet").addEventListener("click", () => document.body.classList.toggle("carnet-ouvert"));
+$("#retour-accueil").addEventListener("click", e => { e.preventDefault(); if (occupe && ctl) ctl.abort(); montrer("accueil"); });
+$("#cadre-libre").addEventListener("input", e => { if (e.target.value.trim()) document.querySelectorAll('input[name="cadre"]').forEach(r => r.checked = false); });
+document.querySelectorAll('input[name="cadre"]').forEach(r => r.addEventListener("change", () => $("#cadre-libre").value = ""));
+let tNotes;
+$("#notes").addEventListener("input", e => { if (!S) return; S.notes = e.target.value; clearTimeout(tNotes); tNotes = setTimeout(sauver, 400); });
+let armeReveler = false;
+$("#btn-reveler").addEventListener("click", e => {
+  if (occupe || !S) return;
+  if (!armeReveler){ armeReveler = true; e.target.textContent = "Sûr·e ? Cliquez encore pour révéler"; setTimeout(()=>{ armeReveler=false; e.target.textContent="Abandonner et lire la solution"; },4000); return; }
+  armeReveler = false; e.target.textContent = "Abandonner et lire la solution";
+  S.statut = "close"; S.verdict = {abandon:true}; sauver();
+  document.body.classList.remove("carnet-ouvert");
+  renderCarnet(); renderAction();
+  $("#zone-action").scrollIntoView({behavior:"smooth"});
+});
+
+/* Démarrage : reprendre l'enquête en cours s'il y en a une */
+const d0 = lireTout();
+if (d0.courante && d0.liste[d0.courante] && d0.liste[d0.courante].statut !== "close"){ S = d0.liste[d0.courante]; montrer("enquete"); renderEnquete(); }
+else montrer("accueil");
+})();
+</script>
